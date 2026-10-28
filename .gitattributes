@@ -1,0 +1,2 @@
+# Preserve CRLF in source ZIP downloads as well as Git checkouts.
+*.bat -text whitespace=cr-at-eol

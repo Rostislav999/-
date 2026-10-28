@@ -247,4 +247,9 @@ class App:
 
 
 if __name__ == "__main__":
-    App(tk.Tk()).root.mainloop()
+    import sys
+
+    app = App(tk.Tk())
+    if "--smoke-test" in sys.argv[1:]:
+        app.root.after(300, app.root.destroy)
+    app.root.mainloop()

@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 artifacts/
+logs/
 *.pdf
 *.docx
 *.xlsx
