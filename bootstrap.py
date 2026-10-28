@@ -65,9 +65,10 @@ def start(project: Path, smoke_test: bool = False) -> int:
             if check:
                 say("[2/3] Installing required packages. Internet is needed for this step...")
                 code = run([str(python), "-m", "pip", "install", "--disable-pip-version-check",
-                            "-r", str(project / "requirements.txt")])
+                            "--only-binary=:all:", "-r", str(project / "requirements.txt")])
                 if code:
-                    raise RuntimeError("Package installation failed. Keep the firewall enabled; see the pip error above.")
+                    raise RuntimeError("Package installation failed. Prebuilt wheels are required; no C++ compiler is needed. "
+                                       "See the pip error above and use the latest requirements.txt. Keep the firewall enabled.")
             else:
                 say("[2/3] Required packages are already installed.")
             say("[3/3] Opening the application...")
