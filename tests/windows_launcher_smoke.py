@@ -13,6 +13,11 @@ def main():
     if os.name != "nt":
         raise SystemExit("This smoke test requires Windows.")
     source = Path(__file__).resolve().parents[1]
+    # A BAT launcher may prefer a different installed Python. Explicitly open
+    # the GUI with the matrix-selected interpreter as well (including 3.15).
+    subprocess.run([sys.executable, str(source / "app.py"), "--smoke-test"],
+                   cwd=source, check=True, timeout=60)
+    print(f"Verified: application window under Python {sys.version.split()[0]}")
     with tempfile.TemporaryDirectory() as temp:
         project = Path(temp) / "Папка с пробелами (тест)" / "--main"
         shutil.copytree(source, project, ignore=shutil.ignore_patterns(".git", ".venv", "__pycache__", "logs"))
