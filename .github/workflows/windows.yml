@@ -13,11 +13,31 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - run: python -m pip install -r requirements.txt
-      - run: python -m unittest discover -s tests -v
+      - name: Unit and setup integration tests
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tests -v *> test-results.txt
+          $testExit = $LASTEXITCODE
+          Add-Content $env:GITHUB_STEP_SUMMARY '### Test results'
+          Add-Content $env:GITHUB_STEP_SUMMARY '```text'
+          Get-Content test-results.txt | Add-Content $env:GITHUB_STEP_SUMMARY
+          Add-Content $env:GITHUB_STEP_SUMMARY '```'
+          Get-Content test-results.txt
+          exit $testExit
       - name: Launch both BAT files and a real Tk window
-        run: python tests/windows_launcher_smoke.py
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: |
+          python tests/windows_launcher_smoke.py *> launcher-results.txt
+          $launcherExit = $LASTEXITCODE
+          Add-Content $env:GITHUB_STEP_SUMMARY '### Windows launcher results'
+          Add-Content $env:GITHUB_STEP_SUMMARY '```text'
+          Get-Content launcher-results.txt | Add-Content $env:GITHUB_STEP_SUMMARY
+          Add-Content $env:GITHUB_STEP_SUMMARY '```'
+          Get-Content launcher-results.txt
+          exit $launcherExit

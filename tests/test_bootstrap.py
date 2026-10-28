@@ -19,13 +19,13 @@ class StartupTests(unittest.TestCase):
             (project / "app.py").write_text('print("TEST APP STARTED")\n')
             with contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(start(project), 0)
-            log = (project / "logs/startup.log").read_text()
+            log = (project / "logs/startup.log").read_text(encoding="utf-8")
             self.assertIn("Creating the Python environment", log)
             self.assertIn("TEST APP STARTED", log)
             (project / "app.py").write_text('raise RuntimeError("TEST STARTUP FAILURE")\n')
             with contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(start(project), 1)
-            log = (project / "logs/startup.log").read_text()
+            log = (project / "logs/startup.log").read_text(encoding="utf-8")
             self.assertIn("TEST STARTUP FAILURE", log)
             self.assertNotIn("Creating the Python environment", log)
 
@@ -33,7 +33,7 @@ class StartupTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()):
             project = Path(temp)
             self.assertEqual(start(project), 1)
-            log = (project / "logs/startup.log").read_text()
+            log = (project / "logs/startup.log").read_text(encoding="utf-8")
             self.assertIn("Extract the complete ZIP", log)
 
 
