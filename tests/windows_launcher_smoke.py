@@ -3,17 +3,20 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="backslashreplace")
     if os.name != "nt":
         raise SystemExit("This smoke test requires Windows.")
     source = Path(__file__).resolve().parents[1]
     with tempfile.TemporaryDirectory() as temp:
         project = Path(temp) / "Папка с пробелами (тест)" / "--main"
         shutil.copytree(source, project, ignore=shutil.ignore_patterns(".git", ".venv", "__pycache__", "logs"))
-        environment = dict(os.environ, PROTOCOL_NO_PAUSE="1")
+        environment = dict(os.environ, PROTOCOL_NO_PAUSE="1", PYTHONUTF8="1")
         for launcher in ("start.bat", "Запустить_Windows.bat"):
             result = subprocess.run(["cmd.exe", "/d", "/c", launcher, "--smoke-test"],
                                     cwd=project, env=environment, timeout=600)

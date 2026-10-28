@@ -40,4 +40,8 @@ jobs:
           Get-Content launcher-results.txt | Add-Content $env:GITHUB_STEP_SUMMARY
           Add-Content $env:GITHUB_STEP_SUMMARY '```'
           Get-Content launcher-results.txt
+          if ($launcherExit -ne 0) {
+            $detail = (Get-Content launcher-results.txt | Select-Object -Last 35) -join '%0A'
+            Write-Output "::error title=Windows launcher failure::$detail"
+          }
           exit $launcherExit
